@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SallesWebMVC.Models;
+using SallesWebMVC.Models.ViewModels;
 using System.Diagnostics;
 
 namespace SallesWebMVC.Controllers
@@ -15,6 +16,7 @@ namespace SallesWebMVC.Controllers
 
         public IActionResult Index()
         {
+            ViewData["Email"] = "antonio.gean@gmail.com";
             return View();
         }
 
