@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SallesWebMVC.Data;
+using SallesWebMVC.Services;
 
 namespace SallesWebMVC
 {
@@ -15,6 +16,7 @@ namespace SallesWebMVC
                 options.UseMySql(connection, ServerVersion.AutoDetect(connection)));
 
             builder.Services.AddScoped<SeedingService>();
+            builder.Services.AddScoped<SellerService>();
          
             // Add services to the container.
             builder.Services.AddControllersWithViews();
