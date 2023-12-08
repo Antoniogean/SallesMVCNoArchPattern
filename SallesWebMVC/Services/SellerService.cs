@@ -16,5 +16,11 @@ namespace SallesWebMVC.Services
         {
             return _context.Seller.ToList();
         }
+
+        public void InsertSeller(Seller seller)
+        {
+            _context.Add(seller);
+            _context.SaveChanges();
+        }
     }
 }

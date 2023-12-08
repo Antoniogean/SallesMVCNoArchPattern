@@ -7,7 +7,7 @@
         public string Email { get; set; }
         public DateTime BirthDate { get; set;}
         public double BaseSalary { get;}
-        public Department Department { get; set; }
+        public Department? Department { get; set; }
         public ICollection<SalesRecord> SalesRecords { get; set; } = new List<SalesRecord>();
 
         public Seller()
