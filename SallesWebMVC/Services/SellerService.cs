@@ -19,7 +19,6 @@ namespace SallesWebMVC.Services
 
         public void InsertSeller(Seller seller)
         {
-            seller.Department = _context.Department.First();
             _context.Add(seller);
             _context.SaveChanges();
         }
