@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SallesWebMVC.Data;
 using SallesWebMVC.Models;
+using SallesWebMVC.Services.Exceptions;
+using System.Data;
 
 namespace SallesWebMVC.Services
 {
@@ -34,6 +36,24 @@ namespace SallesWebMVC.Services
             var obj = _context.Seller.Find(id);
             _context.Seller.Remove(obj);
             _context.SaveChanges();
+        }
+
+        public void UpdateSeller(Seller seller)
+        {
+            if (!_context.Seller.Any(obj => obj.Id == seller.Id))
+            {
+                throw new NotFoundException("Not found id");
+            }
+
+            try
+            {
+                _context.Update(seller);
+                _context.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                throw new DbConcunrrencyExpcetion(e.Message);
+            }
         }
     }
 }

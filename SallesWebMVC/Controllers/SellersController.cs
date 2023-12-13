@@ -2,6 +2,7 @@
 using SallesWebMVC.Models;
 using SallesWebMVC.Models.ViewModels;
 using SallesWebMVC.Services;
+using SallesWebMVC.Services.Exceptions;
 
 namespace SallesWebMVC.Controllers
 {
@@ -74,6 +75,50 @@ namespace SallesWebMVC.Controllers
             }
 
             return View(obj);
+        }
+
+        public IActionResult Edit(int? id)
+        {
+            if(id==null)
+            {
+                return NotFound();
+            }
+
+            var seller = _sellerService.FindById(id.Value);
+
+            if(seller == null)
+            {
+                return NotFound();
+            }
+
+            List<Department> departments = _departmentService.FindAll();
+            SellerFormViewModel sellerFormViewModel = new SellerFormViewModel { Departments = departments, Seller = seller };
+
+            return View(sellerFormViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(int id, Seller seller)
+        {
+            if( id != seller.Id)
+            {
+                return BadRequest();
+            }
+            try
+            {
+            _sellerService.UpdateSeller(seller);
+            return RedirectToAction(nameof(Index)); 
+
+            }
+            catch (NotFoundException)
+            {
+                return NotFound();
+            }
+            catch (DbConcunrrencyExpcetion)
+            {
+                return BadRequest();
+            }
         }
     }
 }
