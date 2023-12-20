@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using SallesWebMVC.Data;
 using SallesWebMVC.Services;
+using System.Globalization;
 
 namespace SallesWebMVC
 {
@@ -23,6 +24,16 @@ namespace SallesWebMVC
             builder.Services.AddControllersWithViews();           
 
             var app = builder.Build();
+
+            var cultureInfo = new CultureInfo("pt-BR");
+            var localizationOptions = new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture(cultureInfo),
+                SupportedCultures = new List<CultureInfo> { cultureInfo },
+                SupportedUICultures = new List<CultureInfo> { cultureInfo }
+            };
+
+            app.UseRequestLocalization(localizationOptions);
 
             app.Services.CreateScope().ServiceProvider.GetRequiredService<SeedingService>().Seed();
 
