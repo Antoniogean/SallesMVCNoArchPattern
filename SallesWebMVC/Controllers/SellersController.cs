@@ -2,7 +2,6 @@
 using SallesWebMVC.Models;
 using SallesWebMVC.Models.ViewModels;
 using SallesWebMVC.Services;
-using SallesWebMVC.Services.Exceptions;
 using System.Diagnostics;
 
 namespace SallesWebMVC.Controllers
@@ -16,41 +15,42 @@ namespace SallesWebMVC.Controllers
             _sellerService = service;
             _departmentService = departmentService;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var list = _sellerService.FindAll();
+            var list = await _sellerService.FindAllAsync();
             return View(list);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            var departments = _departmentService.FindAll();
+            var departments = await _departmentService.FindAllAsync();
             var viewModel = new SellerFormViewModel { Departments = departments };
             return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Seller seller)
+        public async Task<IActionResult> Create(Seller seller)
         {
-            if (!ModelState.IsValid) {
-                var departments = _departmentService.FindAll();
-                var viewModel = new SellerFormViewModel { Seller= seller, Departments = departments };
+            if (!ModelState.IsValid)
+            {
+                var departments = await _departmentService.FindAllAsync();
+                var viewModel = new SellerFormViewModel { Seller = seller, Departments = departments };
                 return View(viewModel);
-                
+
             }
-            _sellerService.InsertSeller(seller);
+            await _sellerService.InsertSellerAsync(seller);
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not provided" });
             }
 
-            var obj = _sellerService.FindById(id.Value);
+            var obj = await _sellerService.FindByIdAsync(id.Value);
 
             if (obj == null)
             {
@@ -62,20 +62,20 @@ namespace SallesWebMVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            _sellerService.DeleteSeller(id);
+            await _sellerService.DeleteSellerAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
             if (id == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not provided" });
             }
 
-            var obj = _sellerService.FindById(id);
+            var obj = await _sellerService.FindByIdAsync(id);
             if (obj == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not provided" });
@@ -83,21 +83,21 @@ namespace SallesWebMVC.Controllers
 
             return View(obj);
         }
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not provided" });
             }
 
-            var seller = _sellerService.FindById(id.Value);
+            var seller = await _sellerService.FindByIdAsync(id.Value);
 
             if (seller == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not provided" });
             }
 
-            List<Department> departments = _departmentService.FindAll();
+            List<Department> departments = await _departmentService.FindAllAsync();
             SellerFormViewModel sellerFormViewModel = new SellerFormViewModel { Departments = departments, Seller = seller };
 
             return View(sellerFormViewModel);
@@ -106,11 +106,11 @@ namespace SallesWebMVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, Seller seller)
+        public async Task<IActionResult> Edit(int id, Seller seller)
         {
             if (!ModelState.IsValid)
             {
-                var departments = _departmentService.FindAll();
+                var departments = await _departmentService.FindAllAsync();
                 var viewModel = new SellerFormViewModel { Seller = seller, Departments = departments };
                 return View(viewModel);
 
@@ -121,13 +121,13 @@ namespace SallesWebMVC.Controllers
             }
             try
             {
-                _sellerService.UpdateSeller(seller);
+                await _sellerService.UpdateSellerAsync(seller);
                 return RedirectToAction(nameof(Index));
 
             }
             catch (ApplicationException e)
             {
-                return RedirectToAction(nameof(Error), new {message = e.Message});
+                return RedirectToAction(nameof(Error), new { message = e.Message });
             }
         }
 
